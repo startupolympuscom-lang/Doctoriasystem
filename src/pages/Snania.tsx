@@ -133,17 +133,17 @@ export default function Snania() {
                   outcomes with stunning realism.
                 </p>
                 <div className="mt-9 flex flex-wrap items-center gap-4">
-                  <a
-                    href="mailto:info@doctoria.ai?subject=SnanIA%20demo"
+                  <Link
+                    to="/snania/try"
                     className="btn-shine rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5 hover:shadow-xl"
                   >
-                    Book a demo
-                  </a>
+                    Try SnanIA now
+                  </Link>
                   <a
-                    href="#pricing"
+                    href="mailto:info@doctoria.ai?subject=SnanIA%20demo"
                     className="rounded-full border border-navy/10 bg-white px-7 py-3.5 text-sm font-semibold text-navy transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
                   >
-                    See pricing
+                    Book a demo
                   </a>
                 </div>
               </div>

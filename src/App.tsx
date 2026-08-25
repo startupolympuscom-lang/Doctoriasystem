@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Snania from './pages/Snania'
+import SnaniaTry from './pages/SnaniaTry'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/snania" element={<Snania />} />
+          <Route path="/snania/try" element={<SnaniaTry />} />
         </Routes>
       </main>
       <Footer />
