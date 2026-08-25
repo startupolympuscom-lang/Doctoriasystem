@@ -16,6 +16,13 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-slow: float 9s ease-in-out infinite;
   --animate-fade-up: fade-up 0.7s ease both;
+  --animate-spin-slow: spin 34s linear infinite;
+  --animate-spin-slow-reverse: spin-reverse 26s linear infinite;
+  --animate-mesh: mesh-move 16s ease-in-out infinite;
+  --animate-mesh-slow: mesh-move 22s ease-in-out infinite reverse;
+  --animate-pulse-ring: pulse-ring 3.4s ease-out infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-marquee: marquee 26s linear infinite;
 }
 
 @keyframes float {
@@ -28,6 +35,37 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes mesh-move {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4%, -6%) scale(1.08); }
+  66% { transform: translate(-3%, 4%) scale(0.96); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -35,6 +73,23 @@ html {
 body {
   background-color: #ffffff;
   color: var(--color-navy);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-soft-gray);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--color-primary), var(--color-primary-dark));
+  border-radius: 999px;
+  border: 2px solid var(--color-soft-gray);
 }
 
 .gradient-text {
@@ -51,4 +106,67 @@ body {
 .dot-grid {
   background-image: radial-gradient(currentColor 1.4px, transparent 1.4px);
   background-size: 16px 16px;
+}
+
+/* Gradient border glow that appears on hover, drawn as a pseudo-element ring */
+.glow-card {
+  position: relative;
+  isolation: isolate;
+}
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), transparent 70%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* Shine sweep for primary buttons */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+.btn-shine:hover::after {
+  left: 130%;
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.4) 75%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 3.5s linear infinite;
+}
+
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }

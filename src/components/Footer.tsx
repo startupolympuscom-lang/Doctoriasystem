@@ -19,12 +19,17 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="bg-navy pt-16 pb-8 text-white/60">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <footer className="relative overflow-hidden bg-navy pt-16 pb-8 text-white/60">
+      <div className="pointer-events-none absolute -bottom-24 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
-            <div className="flex items-center gap-2.5">
-              <img src="/images/logo-mark.png" alt="DoctorIA" className="h-8 w-auto" />
+            <div className="group flex items-center gap-2.5">
+              <img
+                src="/images/logo-mark.png"
+                alt="DoctorIA"
+                className="h-8 w-auto transition-transform duration-500 group-hover:rotate-[8deg]"
+              />
               <span className="font-sans text-lg font-bold text-white">
                 Doctor<span className="text-accent">IA</span>
               </span>
@@ -48,7 +53,7 @@ export default function Footer() {
               <ul className="mt-4 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <a href={l.href} className="text-sm transition-colors hover:text-white">
+                    <a href={l.href} className="text-sm transition-colors hover:text-accent">
                       {l.label}
                     </a>
                   </li>
