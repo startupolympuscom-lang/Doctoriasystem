@@ -1,12 +1,11 @@
 import { FaceLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
-// The WASM runtime is self-hosted under /public/mediapipe (copied from the
-// npm package) so face detection never depends on a third-party CDN being
-// reachable. Only the trained model weights are fetched at runtime, from
-// Google's public model store.
+// Both the WASM runtime and the trained model weights are self-hosted under
+// /public/mediapipe (copied from the npm package / Google's model store at
+// build time) so face detection never depends on a third-party CDN being
+// reachable at runtime.
 const WASM_BASE_PATH = '/mediapipe/wasm'
-const MODEL_URL =
-  'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
+const MODEL_URL = '/mediapipe/face_landmarker.task'
 
 export type Landmark = { x: number; y: number; z: number }
 

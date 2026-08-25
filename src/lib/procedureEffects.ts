@@ -1,7 +1,3 @@
-import { LANDMARKS } from './faceLandmarks'
-
-export type WarpPoint = { index: number; dx: number; dy: number } // dx/dy as a fraction of face width
-
 export type Procedure = {
   id: string
   label: string
@@ -14,8 +10,8 @@ export type Procedure = {
   durationRank: number
   duration: string
   faceChange: string[]
-  whitening?: boolean
-  warp?: WarpPoint[]
+  /** Instruction fed to the image-generation model for this procedure. */
+  promptHint: string
 }
 
 export const PROCEDURES: Procedure[] = [
@@ -28,7 +24,7 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 1,
     duration: '~1 hour, single visit',
     faceChange: [],
-    whitening: true,
+    promptHint: 'Whiten the teeth noticeably — brighter, more uniform tooth color, no other change to the mouth shape.',
   },
   {
     id: 'veneers',
@@ -39,12 +35,8 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 2,
     duration: '2–3 weeks',
     faceChange: ['Fuller lip support', 'Softer nasolabial fold appearance'],
-    warp: [
-      { index: LANDMARKS.upperLipTop, dx: 0, dy: -0.012 },
-      { index: LANDMARKS.lowerLipBottom, dx: 0, dy: 0.012 },
-      { index: LANDMARKS.mouthCornerLeft, dx: -0.006, dy: 0 },
-      { index: LANDMARKS.mouthCornerRight, dx: 0.006, dy: 0 },
-    ],
+    promptHint:
+      'Apply cosmetic veneers: teeth become more uniform, whiter, and symmetric, with slightly fuller-looking lip support.',
   },
   {
     id: 'invisalign',
@@ -55,12 +47,8 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 4,
     duration: '6–18 months',
     faceChange: ['Improved jaw alignment', 'More symmetric smile arc', 'Balanced lip line'],
-    warp: [
-      { index: LANDMARKS.mouthCornerLeft, dx: 0.006, dy: 0 },
-      { index: LANDMARKS.mouthCornerRight, dx: -0.006, dy: 0 },
-      { index: LANDMARKS.jawLeft, dx: 0.01, dy: 0 },
-      { index: LANDMARKS.jawRight, dx: -0.01, dy: 0 },
-    ],
+    promptHint:
+      'Straighten and align the teeth as clear aligners would achieve over time — evenly spaced teeth, a more symmetric smile arc.',
   },
   {
     id: 'braces',
@@ -71,12 +59,8 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 5,
     duration: '12–24 months',
     faceChange: ['Improved jaw alignment', 'More symmetric smile arc'],
-    warp: [
-      { index: LANDMARKS.mouthCornerLeft, dx: 0.006, dy: 0 },
-      { index: LANDMARKS.mouthCornerRight, dx: -0.006, dy: 0 },
-      { index: LANDMARKS.jawLeft, dx: 0.01, dy: 0 },
-      { index: LANDMARKS.jawRight, dx: -0.01, dy: 0 },
-    ],
+    promptHint:
+      'Straighten and align the teeth as orthodontic braces would achieve over time — evenly spaced teeth, a more symmetric smile arc.',
   },
   {
     id: 'implants',
@@ -87,10 +71,7 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 3,
     duration: '3–6 months',
     faceChange: ['Restored cheek volume near the gap'],
-    warp: [
-      { index: LANDMARKS.cheekLeft, dx: -0.008, dy: 0 },
-      { index: LANDMARKS.cheekRight, dx: 0.008, dy: 0 },
-    ],
+    promptHint: 'Fill any visible gaps between teeth with natural-looking dental implants.',
   },
   {
     id: 'gumContouring',
@@ -101,7 +82,7 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 1,
     duration: '~45 minutes, single visit',
     faceChange: ['Reduced gummy smile', 'Longer visual tooth-to-lip ratio'],
-    warp: [{ index: LANDMARKS.upperLipTop, dx: 0, dy: 0.012 }],
+    promptHint: 'Reduce visible gum tissue when smiling (gum contouring), making the teeth look proportionally longer.',
   },
   {
     id: 'jawCorrections',
@@ -112,11 +93,7 @@ export const PROCEDURES: Procedure[] = [
     durationRank: 6,
     duration: '6–12 months',
     faceChange: ['Improved jaw projection', 'Enhanced facial symmetry', 'Changed profile silhouette'],
-    warp: [
-      { index: LANDMARKS.chin, dx: 0, dy: -0.014 },
-      { index: LANDMARKS.jawLowerLeft, dx: 0.008, dy: -0.006 },
-      { index: LANDMARKS.jawLowerRight, dx: -0.008, dy: -0.006 },
-    ],
+    promptHint: 'Subtly adjust jaw alignment for better facial symmetry and profile balance, as orthognathic correction would.',
   },
 ]
 
@@ -142,4 +119,8 @@ export function collectFaceChange(selected: Procedure[]): string[] {
   const seen = new Set<string>()
   selected.forEach((p) => p.faceChange.forEach((f) => seen.add(f)))
   return Array.from(seen)
+}
+
+export function buildPrompt(selected: Procedure[]): string {
+  return selected.map((p) => `${p.label}: ${p.promptHint}`).join(' ')
 }

@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express from 'express'
 import { pool } from './db.js'
+import { generateEditedImage } from './gemini.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -14,6 +15,46 @@ app.get('/api/health', async (_req, res) => {
     res.json({ ok: true, db: 'connected' })
   } catch (err) {
     res.status(500).json({ ok: false, db: 'unreachable', error: err.message })
+  }
+})
+
+function parseDataUrl(dataUrl) {
+  const match = /^data:(image\/[a-zA-Z+.-]+);base64,(.+)$/.exec(dataUrl || '')
+  if (!match) return null
+  return { mimeType: match[1], base64: match[2] }
+}
+
+// Generate an AI photo-edit preview of the selected procedures. This is a
+// general-purpose image model, not a dental-trained one — treat the result
+// as an illustrative preview, never a clinical prediction.
+app.post('/api/generate-preview', async (req, res) => {
+  const { beforeImage, instruction } = req.body || {}
+  const parsed = parseDataUrl(beforeImage)
+  if (!parsed) {
+    return res.status(400).json({ error: 'beforeImage must be a data URL (image/...;base64,...)' })
+  }
+  if (!instruction || typeof instruction !== 'string') {
+    return res.status(400).json({ error: 'instruction is required' })
+  }
+
+  const fullInstruction = `You are generating a "what could this look like after treatment" preview for a legitimate dental practice's cosmetic consultation tool. This is a same-person photo edit, not a new image.
+
+Edit ONLY the mouth, teeth, and jaw area as described below. Keep the person's identity, facial features, skin tone, hairstyle, clothing, background, lighting, and camera angle exactly the same as the input photo — this must read as the same photo, subtly modified, not a new photo of a different-looking person.
+
+Changes to simulate: ${instruction}
+
+The result should look like a natural, photorealistic, unretouched photo — not exaggerated, not a cartoon, not "beautified" beyond what the described procedures would plausibly do.`
+
+  try {
+    const result = await generateEditedImage({
+      imageBase64: parsed.base64,
+      mimeType: parsed.mimeType,
+      instruction: fullInstruction,
+    })
+    res.json({ afterImage: `data:${result.mimeType};base64,${result.imageBase64}` })
+  } catch (err) {
+    console.error('Gemini generation failed:', err)
+    res.status(502).json({ error: err.message || 'Failed to generate preview' })
   }
 })
 

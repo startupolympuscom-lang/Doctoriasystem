@@ -45,3 +45,13 @@ export async function listSimulations(limit = 8): Promise<SimulationSummary[]> {
   if (!res.ok) throw new Error(await readError(res))
   return res.json()
 }
+
+export async function generatePreview(beforeImage: string, instruction: string): Promise<{ afterImage: string }> {
+  const res = await fetch('/api/generate-preview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ beforeImage, instruction }),
+  })
+  if (!res.ok) throw new Error(await readError(res))
+  return res.json()
+}
