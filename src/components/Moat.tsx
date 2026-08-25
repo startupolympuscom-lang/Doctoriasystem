@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 const moats = [
   {
     num: '01',
@@ -24,46 +26,52 @@ const moats = [
 
 export default function Moat() {
   return (
-    <section className="relative bg-navy py-24 text-white lg:py-32">
+    <section className="relative overflow-hidden bg-navy py-24 text-white lg:py-32">
       <div className="dot-grid pointer-events-none absolute top-10 left-10 h-32 w-32 text-white/10" />
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="section-label text-xs font-bold text-accent">UNFAIR ADVANTAGE</p>
-          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
-            Three compounding moats.
-            <br />
-            No competitor <span className="gradient-text">holds all three.</span>
-          </h2>
-        </div>
+      <div className="animate-mesh pointer-events-none absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-primary/20 blur-3xl" />
+      <div className="animate-mesh-slow pointer-events-none absolute -top-32 left-1/3 h-[320px] w-[320px] rounded-full bg-accent/10 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <Reveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="section-label text-xs font-bold text-accent">UNFAIR ADVANTAGE</p>
+            <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
+              Three compounding moats.
+              <br />
+              No competitor <span className="gradient-text">holds all three.</span>
+            </h2>
+          </div>
+        </Reveal>
 
         <div className="mt-14 space-y-5">
-          {moats.map((m) => (
-            <div
-              key={m.num}
-              className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-7 transition-colors hover:bg-white/[0.07] sm:flex-row sm:items-center"
-            >
-              <div className="flex shrink-0 items-center gap-4 sm:w-72">
-                <span className="text-3xl font-extrabold text-white/15">{m.num}</span>
-                <div>
-                  <p
-                    className="mb-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide"
-                    style={{ color: m.color, backgroundColor: `${m.color}26` }}
-                  >
-                    {m.tag.toUpperCase()}
-                  </p>
-                  <p className="font-bold leading-snug">{m.title}</p>
+          {moats.map((m, i) => (
+            <Reveal key={m.num} delay={i * 120} direction="left">
+              <div className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07] sm:flex-row sm:items-center">
+                <div className="flex shrink-0 items-center gap-4 sm:w-72">
+                  <span className="text-3xl font-extrabold text-white/15">{m.num}</span>
+                  <div>
+                    <p
+                      className="mb-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide"
+                      style={{ color: m.color, backgroundColor: `${m.color}26` }}
+                    >
+                      {m.tag.toUpperCase()}
+                    </p>
+                    <p className="font-bold leading-snug">{m.title}</p>
+                  </div>
                 </div>
+                <p className="text-sm leading-relaxed text-white/55 sm:border-l sm:border-white/10 sm:pl-6">{m.copy}</p>
               </div>
-              <p className="text-sm leading-relaxed text-white/55 sm:border-l sm:border-white/10 sm:pl-6">{m.copy}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
 
-        <p className="mx-auto mt-10 max-w-3xl text-center text-sm italic text-white/45">
-          The unfair advantage in one sentence: DoctorIA is the only AI
-          platform training a shared computer-vision engine on cross-specialty
-          MENA data &mdash; 3 to 5 years ahead of any competitor who starts today.
-        </p>
+        <Reveal delay={200}>
+          <p className="mx-auto mt-10 max-w-3xl text-center text-sm italic text-white/45">
+            The unfair advantage in one sentence: DoctorIA is the only AI
+            platform training a shared computer-vision engine on cross-specialty
+            MENA data &mdash; 3 to 5 years ahead of any competitor who starts today.
+          </p>
+        </Reveal>
       </div>
     </section>
   )

@@ -1,29 +1,22 @@
-import Architecture from './components/Architecture'
-import CTA from './components/CTA'
-import CycleOfCare from './components/CycleOfCare'
+import { Route, Routes } from 'react-router-dom'
 import Footer from './components/Footer'
-import Hero from './components/Hero'
-import Market from './components/Market'
-import Mission from './components/Mission'
-import Moat from './components/Moat'
 import Navbar from './components/Navbar'
-import Products from './components/Products'
-import Roadmap from './components/Roadmap'
+import ScrollToTop from './components/ScrollToTop'
+import Home from './pages/Home'
+import Snania from './pages/Snania'
+import SnaniaTry from './pages/SnaniaTry'
 
 function App() {
   return (
     <div className="min-h-screen bg-white font-sans">
+      <ScrollToTop />
       <Navbar />
       <main>
-        <Hero />
-        <CycleOfCare />
-        <Products />
-        <Architecture />
-        <Market />
-        <Moat />
-        <Mission />
-        <Roadmap />
-        <CTA />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/snania" element={<Snania />} />
+          <Route path="/snania/try" element={<SnaniaTry />} />
+        </Routes>
       </main>
       <Footer />
     </div>
