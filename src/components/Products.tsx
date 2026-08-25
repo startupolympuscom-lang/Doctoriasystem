@@ -1,6 +1,19 @@
+import { Link } from 'react-router-dom'
 import Reveal from './Reveal'
 
-const products = [
+type Product = {
+  name: string
+  tag: string
+  title: string
+  color: string
+  colorSoft: string
+  copy: string
+  points: string[]
+  icon: string
+  link?: string
+}
+
+const products: Product[] = [
   {
     name: 'Oncologia',
     tag: 'Oncology module',
@@ -30,6 +43,7 @@ const products = [
     copy: 'Converts a smile photo into a photorealistic before/after simulation in seconds &mdash; a chairside conversion tool for aesthetic dentistry.',
     points: ['Reduces patient hesitation on treatment plans', 'Fastest path to revenue &mdash; no regulatory clearance'],
     icon: '/images/icon-snania.png',
+    link: '/snania',
   },
 ]
 
@@ -93,6 +107,26 @@ export default function Products() {
                     </li>
                   ))}
                 </ul>
+
+                {p.link && (
+                  <Link
+                    to={p.link}
+                    className="group/link mt-5 flex items-center gap-1.5 text-sm font-semibold text-primary"
+                  >
+                    Learn more
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      className="transition-transform duration-300 group-hover/link:translate-x-1"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                )}
               </div>
             </Reveal>
           ))}

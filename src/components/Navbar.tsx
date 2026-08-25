@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 const links = [
-  { href: '#platform', label: 'Platform' },
-  { href: '#products', label: 'Products' },
-  { href: '#mission', label: 'Mission' },
-  { href: '#roadmap', label: 'Roadmap' },
-  { href: '#contact', label: 'Contact' },
+  { hash: '#platform', label: 'Platform' },
+  { hash: '#products', label: 'Products' },
+  { hash: '#mission', label: 'Mission' },
+  { hash: '#roadmap', label: 'Roadmap' },
+  { hash: '#contact', label: 'Contact' },
 ]
 
 export default function Navbar() {
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
+
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -24,11 +28,13 @@ export default function Navbar() {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
+    if (!isHome) return
+
     const sections = links
-      .map((l) => document.querySelector(l.href))
+      .map((l) => document.querySelector(l.hash))
       .filter((el): el is Element => !!el)
 
     if (typeof IntersectionObserver === 'undefined' || sections.length === 0) return
@@ -46,7 +52,10 @@ export default function Navbar() {
 
     sections.forEach((s) => observer.observe(s))
     return () => observer.disconnect()
-  }, [])
+  }, [isHome])
+
+  const hrefFor = (hash: string) => (isHome ? hash : `/${hash}`)
+  const displayActive = isHome ? active : ''
 
   return (
     <header
@@ -62,7 +71,16 @@ export default function Navbar() {
       </div>
 
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <a href="#top" className="group flex items-center gap-2.5">
+        <Link
+          to="/"
+          onClick={(e) => {
+            if (isHome) {
+              e.preventDefault()
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }
+          }}
+          className="group flex items-center gap-2.5"
+        >
           <img
             src="/images/logo-mark.png"
             alt="DoctorIA"
@@ -71,18 +89,18 @@ export default function Navbar() {
           <span className="font-sans text-xl font-bold text-navy">
             Doctor<span className="text-primary">IA</span>
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-1 rounded-full border border-navy/5 bg-navy/[0.02] px-1.5 py-1.5 md:flex">
           {links.map((l) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.hash}
+              href={hrefFor(l.hash)}
               className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
-                active === l.href ? 'text-white' : 'text-navy/60 hover:text-primary'
+                displayActive === l.hash ? 'text-white' : 'text-navy/60 hover:text-primary'
               }`}
             >
-              {active === l.href && (
+              {displayActive === l.hash && (
                 <span className="absolute inset-0 -z-10 rounded-full bg-primary shadow-sm shadow-primary/40" />
               )}
               {l.label}
@@ -92,7 +110,7 @@ export default function Navbar() {
 
         <div className="hidden md:block">
           <a
-            href="#contact"
+            href={hrefFor('#contact')}
             className="btn-shine rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary/30 transition-all hover:-translate-y-0.5 hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/30"
           >
             Get in touch
@@ -122,16 +140,16 @@ export default function Navbar() {
         <div className="flex flex-col gap-4 px-6 py-4">
           {links.map((l) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.hash}
+              href={hrefFor(l.hash)}
               onClick={() => setOpen(false)}
-              className={`text-sm font-medium ${active === l.href ? 'text-primary' : 'text-navy/70'}`}
+              className={`text-sm font-medium ${displayActive === l.hash ? 'text-primary' : 'text-navy/70'}`}
             >
               {l.label}
             </a>
           ))}
           <a
-            href="#contact"
+            href={hrefFor('#contact')}
             onClick={() => setOpen(false)}
             className="mt-1 rounded-full bg-primary px-5 py-2.5 text-center text-sm font-semibold text-white"
           >
