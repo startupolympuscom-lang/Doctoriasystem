@@ -9,6 +9,7 @@ const links = [
 ]
 
 export default function Navbar() {
+  const [dark, setDark] = useState(true)
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -17,13 +18,24 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 12)
+
+      // Stay in "dark" (light-text) mode for as long as the hero's own dark
+      // background is behind the header, regardless of how tall it is.
+      const hero = document.getElementById('top')
+      const heroBottom = hero ? hero.offsetHeight : 0
+      setDark(window.scrollY < heroBottom - 72)
+
       const doc = document.documentElement
       const max = doc.scrollHeight - doc.clientHeight
       setProgress(max > 0 ? (window.scrollY / max) * 100 : 0)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   useEffect(() => {
@@ -51,10 +63,10 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/80 shadow-sm shadow-navy/5 backdrop-blur-xl' : 'bg-transparent'
+        !dark && scrolled ? 'bg-white/80 shadow-sm shadow-navy/5 backdrop-blur-xl' : 'bg-transparent'
       }`}
     >
-      <div className="absolute inset-x-0 bottom-0 h-[2px] bg-navy/[0.04]">
+      <div className={`absolute inset-x-0 bottom-0 h-[2px] ${dark ? 'bg-white/10' : 'bg-navy/[0.04]'}`}>
         <div
           className="h-full bg-gradient-to-r from-primary to-accent transition-[width] duration-150 ease-out"
           style={{ width: `${progress}%` }}
@@ -68,18 +80,26 @@ export default function Navbar() {
             alt="DoctorIA"
             className="h-9 w-auto transition-transform duration-500 group-hover:rotate-[8deg]"
           />
-          <span className="font-sans text-xl font-bold text-navy">
-            Doctor<span className="text-primary">IA</span>
+          <span className={`font-sans text-xl font-bold transition-colors duration-300 ${dark ? 'text-white' : 'text-navy'}`}>
+            Doctor<span className="text-accent">IA</span>
           </span>
         </a>
 
-        <div className="hidden items-center gap-1 rounded-full border border-navy/5 bg-navy/[0.02] px-1.5 py-1.5 md:flex">
+        <div
+          className={`hidden items-center gap-1 rounded-full border px-1.5 py-1.5 backdrop-blur-md transition-colors duration-300 md:flex ${
+            dark ? 'border-white/15 bg-white/5' : 'border-navy/5 bg-navy/[0.02]'
+          }`}
+        >
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${
-                active === l.href ? 'text-white' : 'text-navy/60 hover:text-primary'
+                active === l.href
+                  ? 'text-white'
+                  : dark
+                    ? 'text-white/70 hover:text-white'
+                    : 'text-navy/60 hover:text-primary'
               }`}
             >
               {active === l.href && (
@@ -93,7 +113,11 @@ export default function Navbar() {
         <div className="hidden md:block">
           <a
             href="#contact"
-            className="btn-shine rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary/30 transition-all hover:-translate-y-0.5 hover:bg-primary-dark hover:shadow-lg hover:shadow-primary/30"
+            className={`btn-shine rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+              dark
+                ? 'bg-white text-navy shadow-white/10 hover:bg-light-blue'
+                : 'bg-primary text-white shadow-primary/30 hover:bg-primary-dark hover:shadow-primary/30'
+            }`}
           >
             Get in touch
           </a>
@@ -101,7 +125,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-navy md:hidden"
+          className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-300 md:hidden ${dark ? 'text-white' : 'text-navy'}`}
           aria-label="Toggle menu"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -115,9 +139,9 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`overflow-hidden border-t border-navy/5 bg-white/95 backdrop-blur-xl transition-all duration-300 md:hidden ${
-          open ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`overflow-hidden border-t backdrop-blur-xl transition-all duration-300 md:hidden ${
+          dark ? 'border-white/10 bg-navy/95' : 'border-navy/5 bg-white/95'
+        } ${open ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}
       >
         <div className="flex flex-col gap-4 px-6 py-4">
           {links.map((l) => (
@@ -125,7 +149,9 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className={`text-sm font-medium ${active === l.href ? 'text-primary' : 'text-navy/70'}`}
+              className={`text-sm font-medium ${
+                active === l.href ? 'text-primary' : dark ? 'text-white/70' : 'text-navy/70'
+              }`}
             >
               {l.label}
             </a>

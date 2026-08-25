@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -132,24 +132,20 @@ body {
   opacity: 1;
 }
 
-/* Shine sweep for primary buttons */
+/* Shine sweep for primary buttons, drawn as the element's own
+   background-image (not a separate absolutely-positioned pseudo-element) so
+   there is no child box that can ever paint outside the button's own
+   rounded corners — no overflow:hidden clipping to rely on. */
 .btn-shine {
   position: relative;
-  overflow: hidden;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.65) 50%, transparent 60%);
+  background-size: 300% 100%;
+  background-position: 200% 0;
+  transition: background-position 0.8s ease;
 }
-.btn-shine::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(115deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.7s ease;
-}
-.btn-shine:hover::after {
-  left: 130%;
+.btn-shine:hover {
+  background-position: -100% 0;
 }
 
 .shimmer-text {
@@ -164,6 +160,18 @@ body {
 .mask-fade-b {
   -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+
+.vertical-rl {
+  writing-mode: vertical-rl;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
 }
 
 .noise-overlay {
